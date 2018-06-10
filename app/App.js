@@ -4,7 +4,9 @@
  * @flow
  */
 
-import React, { Component } from "react";
+import React, {
+  Component
+} from "react";
 import {
   Platform,
   StyleSheet,
@@ -16,75 +18,48 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import DeckList from "./components/DeckList.js";
-import { getData } from "./utils/api.js";
+import Quiz from "./components/Quiz.js";
+import {
+  StackNavigator,
+} from 'react-navigation';
+import {
+  getData
+} from "./utils/api.js";
 import firebase from "firebase";
 
-type Props = {};
-export default class App extends Component<Props> {
-  componentWillMount() {
-    var config = {
-      apiKey: "AIzaSyA8IDk83Pvx-hk4WyHOwCeTibzGGp0Mvxs",
-      authDomain: "reactskillster.firebaseapp.com",
-      databaseURL: "https://reactskillster.firebaseio.com",
-      projectId: "reactskillster",
-      storageBucket: "",
-      messagingSenderId: "141970191809"
-    };
-    firebase.initializeApp(config);
 
-  /*  firebase.database().ref('user/001').set([
-      {
-        name: "java",
-        id: 1,
-        subjects: [
-          {
-            name: "core java",
-            id: 1,
-            subjects: {}
-          },
-          {
-            name: "advanced java",
-            id: 2
-          },
-          {
-            name: "android",
-            id: 3
-          }
-        ]
-      },
-      {
-        name: "js",
-        id: 2,
-        subjects: [
-          {
-            name: "angular",
-            id: 1,
-            subjects: {}
-          },
-          {
-            name: "react",
-            id: 2
-          },
-          {
-            name: "ES6",
-            id: 3
-          }
-        ]
-      },
-      {
-        name: "python",
-        id: 3
-      },
-      {
-        name: "sql",
-        id: 4
-      }
-    ]).then(()=>{
-      console.log('Inserted !');
-    }).catch((error)=>{
-      console.log(error);
-    })*/
+type Props = {};
+var deckData = [];
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA8IDk83Pvx-hk4WyHOwCeTibzGGp0Mvxs",
+  authDomain: "reactskillster.firebaseapp.com",
+  databaseURL: "https://reactskillster.firebaseio.com",
+  projectId: "reactskillster",
+  storageBucket: "",
+  messagingSenderId: "141970191809"
+};
+
+const firebaseApp = firebase.initializeApp(firebaseConfig);
+
+const MainNavigator  = StackNavigator({
+  DeckList: { screen: DeckList },
+  Quiz: { screen: Quiz }
+});
+
+export default class App extends Component < Props > {
+
+
+  constructor() {
+    super();
+    this.itemRef = this.getRef().child('001');
+
   }
+
+  getRef() {
+    return firebaseApp.database().ref('user');
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -111,12 +86,11 @@ export default class App extends Component<Props> {
             <Text style={styles.tabTitle}>Paths</Text>
           </TouchableOpacity>
         </View>
-        <DeckList fbValue={firebase}/>
+         <DeckList/>
       </View>
     );
   }
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1

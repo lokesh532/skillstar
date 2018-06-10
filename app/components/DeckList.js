@@ -13,44 +13,61 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { getData } from "../utils/api.js";
+import Quiz from "./Quiz.js";
+import {
+  StackNavigator,
+} from 'react-navigation';
 const numColumns = 2;
 const size = Dimensions.get("window").width / numColumns;
 
 const images = [];
 
+
+const MainNavigator  = StackNavigator({
+  Quiz: { screen: Quiz }
+});
+
 type Props = {};
 
 export default class DeckList extends Component<Props> {
-  
   constructor(props) {
-        console.log('firebase props : '+props.fbValue);
     super(props);
+  //  this.itemRef = props.itemRef;
     this.state = {
-        data: getData(props.fbValue)
+      data: getData()
     };
   }
 
+  // componentDidMount() {
+  //   this.itemRef.on("value", data => {
+  //     let items = [];
+  //     data.forEach(child => {
+  //       items.push({
+  //         name: child.val().name,
+  //         id: child.val().id,
+  //         subjects: child.val().subjects
+  //       });
+  //     });
+  //     console.log("items" + JSON.stringify(items));
+  //     this.setState({
+  //       data: items
+  //     });
+  //   });
+  // }
+
   _onPress = item => {
-    console.log(item);
-    this.setState({
-      data: this.state.data[item.id - 1].subjects
-    });
+    if(this.state.data[item.id - 1].subjects==null)
+    {
+      console.log('go to quiz');
+      this.props.navigation.navigate('Quiz');
+    }
+    else {
+      this.setState({
+        data: this.state.data[item.id - 1].subjects
+      });
+    }
+
   };
-
-  renderItem(data) {
-    console.log("data log :" + data.name);
-    let { name } = data;
-
-    return (
-      <View style={styles.itemContainer}>
-        <TouchableOpacity onPress={this.onPress}>
-          <View style={styles.cardItem}>
-            <Text style={{ fontSize: 35 }}>{name}</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-    );
-  }
 
   render() {
     const cards = [];
@@ -65,24 +82,29 @@ export default class DeckList extends Component<Props> {
               onPress={() => this._onPress(item)}
             >
               <View style={styles.cardItem}>
-                <Text style={{ fontSize: 35 }}>{item.name}</Text>
+                <Text
+                  style={{
+                    fontSize: 35
+                  }}
+                >
+                  {item.name}
+                </Text>
               </View>
             </TouchableOpacity>
           )}
           keyExtractor={item => item.id}
           numColumns={numColumns}
         />
-
-      <View style={styles.tabBar}>
-        <TouchableOpacity style={styles.tabItem}>
-          <Icon name="question-answer" size={25} />
-          <Text style={styles.tabTitle}>Deck List</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tabItem}>
-          <Icon name="video-library" size={25} />
-          <Text style={styles.tabTitle}>Add Deck</Text>
-        </TouchableOpacity>
-      </View>
+        <View style={styles.tabBar}>
+          <TouchableOpacity style={styles.tabItem}>
+            <Icon name="question-answer" size={25} />
+            <Text style={styles.tabTitle}> Deck List </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.tabItem}>
+            <Icon name="video-library" size={25} />
+            <Text style={styles.tabTitle}> Add Deck </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
