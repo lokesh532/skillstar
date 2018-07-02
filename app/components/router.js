@@ -1,9 +1,9 @@
 import React from "react";
 import { Platform, StatusBar } from "react-native";
 import {
-  StackNavigator,
+  createStackNavigator,
   TabNavigator,
-  SwitchNavigator
+  createSwitchNavigator
 } from "react-navigation";
 import { FontAwesome } from "react-native-vector-icons";
 
@@ -18,7 +18,7 @@ const headerStyle = {
   marginTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
 };
 
-export const SignedOut = StackNavigator({
+export const SignedOut = createStackNavigator({
   SignUp: {
     screen: SignUp,
     navigationOptions: {
@@ -35,29 +35,44 @@ export const SignedOut = StackNavigator({
   }
 });
 
-export const Home = SwitchNavigator({
+export const Home = createStackNavigator({
   DeckList: {
     screen: DeckList,
-    navigationOptions: {
-      tabBarLabel: "Home",
-      tabBarIcon: ({ tintColor }) => (
-        <FontAwesome name="home" size={30} color={tintColor} />
-      )
-    }
+      navigationOptions: {
+        header:null
+      }
   },
   Quiz: {
     screen: Quiz,
     navigationOptions: {
-      title: "Quiz"
+      title: "Quiz",
+      tabBarVisible: false
     }
   }
 });
+
+Home.navigationOptions = ({ navigation }) => {
+  let { routeName } = navigation.state.routes[navigation.state.index];
+  let navigationOptions = {};
+//  console.log(routeName);
+  if (routeName === 'Quiz') {
+    navigationOptions.tabBarVisible = false;
+  }
+
+  return navigationOptions;
+};
 
 
 export const SignedIn = TabNavigator(
   {
     Home: {
-      screen: Home
+      screen: Home,
+      navigationOptions: {
+        tabBarLabel: "Home",
+        tabBarIcon: ({ tintColor }) => (
+          <FontAwesome name="home" size={30} color={tintColor} />
+        )
+      }
     },
     Profile: {
       screen: Profile,
@@ -79,7 +94,7 @@ export const SignedIn = TabNavigator(
 );
 
 export const createRootNavigator = (signedIn = false) => {
-  return SwitchNavigator(
+  return createSwitchNavigator(
     {
       SignedIn: {
         screen: SignedIn

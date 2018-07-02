@@ -30,6 +30,12 @@ export default class DeckList extends Component<Props> {
     };
   }
 
+  componentDidMount(){
+    questionApi.getAllQuestion().then(data=>{
+    this.setState({questions:data}); 
+    })
+  }
+
   resetQuiz() {
     this.setState({ questionNumber: 0, correct: 0, incorrect: 0, skipped: 0,percent:0 });
   }

@@ -71,7 +71,7 @@ export default class DeckList extends Component<Props> {
     return (
       <View style={styles.container}>
         <FlatList
-          data={this.state.data}
+          data={ this.state.data}
           renderItem={({ item, separators }) => (
             <TouchableOpacity
               style={styles.itemContainer}
